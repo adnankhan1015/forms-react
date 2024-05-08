@@ -9,14 +9,45 @@ export default function Login() {
     password: "",
   });
 
+  const [didEdit, setDidEdit] = useState({
+    email: false,
+    password: false,
+  });
+
+  // We're checking if the entered email does not include the @ symbol.
+  // In that case emailIsInvalid would be true
+  const emailIsInvalid = didEdit.email && !enteredValues.email.includes("@");
+
+  // ! Password Validation requirements: atleast 1 Capital alphabet, atleast 1 special character, atleast 1 Numeric number, and lenght should not be less than 8.
+
   function handleSubmit(event) {
     event.preventDefault();
     console.log("Submitted");
     console.log("Entered Values:", enteredValues);
+
     setEnteredValues({
       email: "",
       password: "",
     });
+  }
+
+  function handleInputBlur(identifier) {
+    setDidEdit((prevEdit) => ({
+      ...prevEdit,
+      [identifier]: true,
+    }));
+  }
+
+  function handleInputChange(identifier, value) {
+    setEnteredValues((prevValues) => ({
+      ...prevValues,
+      [identifier]: value,
+    }));
+
+    setDidEdit((prevEdit) => ({
+      ...prevEdit,
+      [identifier]: false,
+    }));
   }
 
   // function handleEmailChange(event) {
@@ -26,13 +57,6 @@ export default function Login() {
   // function handlePasswordChange(event) {
   //   setEnteredPassword(event.target.value);
   // }
-
-  function handleInputChange(identifier, value) {
-    setEnteredValues((prevValues) => ({
-      ...prevValues,
-      [identifier]: value,
-    }));
-  }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -45,9 +69,13 @@ export default function Login() {
             id="email"
             type="email"
             name="email"
+            onBlur={() => handleInputBlur("email")}
             onChange={(event) => handleInputChange("email", event.target.value)}
             value={enteredValues.email}
           />
+          <div className="control-error">
+            {emailIsInvalid && <p>Please enter a valid email address.</p>}
+          </div>
         </div>
 
         <div className="control no-margin">
